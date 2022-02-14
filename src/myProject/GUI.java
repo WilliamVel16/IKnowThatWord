@@ -5,6 +5,8 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 /**
  * This class is used for design the interface, with their respective listeners and orders that arise from these.
@@ -19,15 +21,16 @@ public class GUI extends JFrame {
             "Después de la serie de las palabras a memorizar, el juego\n" +
             "te presentará un listado con el doble de palabras.\n" +
             "Si la palabra hace parte del listado que has memorizado, pulsa\n" +
-            "el botón 'Sí', de lo contrario pulsa el botón 'No'.\n\n" +
-            "Juguemos!\n";
+            "el botón 'Sí', de lo contrario pulsa el botón 'No'.\n\n";
 
     private Header headerProject;
     private JTextArea areaTexto;
     private FileManager fileManager;
     private Escucha escucha;
-    private JButton opcionNo, opcionSi, jugar, ayuda, salir;
+    private JButton opcionNo, opcionSi, jugar, ayuda, salir, mostrarNiveles;
     private JPanel panelPalabras, panelPuntajeUsuario, panelNivelUsuario;
+    JugadoresGuardados jugadoresGuardados = new JugadoresGuardados();
+    ControlThatWord controlThatWord = new ControlThatWord();
 
     /**
      * Constructor of GUI class
@@ -103,12 +106,22 @@ public class GUI extends JFrame {
         constraints.anchor = GridBagConstraints.CENTER;
         this.add(ayuda, constraints);
 
-        jugar = new JButton("   Jugar   ");
-        jugar.setFont(new Font("Monospaced",Font.BOLD,13));
-        jugar.addActionListener(escucha);
+        mostrarNiveles = new JButton("Ver niveles");
+        mostrarNiveles.setFont(new Font("Monospaced",Font.BOLD,13));
+        mostrarNiveles.addActionListener(escucha);
         constraints.gridx = 1;
         constraints.gridy = 5;
         constraints.gridwidth = 1;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.anchor = GridBagConstraints.CENTER;
+        this.add(mostrarNiveles, constraints);
+
+        jugar = new JButton("  Jugar  ");
+        jugar.setFont(new Font("Monospaced",Font.BOLD,13));
+        jugar.addActionListener(escucha);
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        constraints.gridwidth = 2;
         constraints.fill = GridBagConstraints.NONE;
         constraints.anchor = GridBagConstraints.CENTER;
         this.add(jugar, constraints);
@@ -135,6 +148,9 @@ public class GUI extends JFrame {
         constraints.anchor = GridBagConstraints.CENTER;
         this.add(panelPalabras, constraints);
         panelPalabras.setBackground(new Color(255,255,255,0));
+
+        panelPalabras.setFocusable(true);
+        panelPalabras.requestFocusInWindow();
 
         //panelPalabras.add(palabras que salen del .txt);
 
@@ -175,34 +191,131 @@ public class GUI extends JFrame {
     /**
      * inner class that extends an Adapter Class or implements Listeners used by GUI class
      */
-    private class Escucha implements ActionListener{
-
-        JugadoresGuardados jugadoresGuardados = new JugadoresGuardados();
+    private class Escucha implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(e.getSource() == ayuda){
+            if (e.getSource() == ayuda) {
                 JOptionPane.showMessageDialog(null, MENSAJE_AYUDA);
-            }else{
-                if(e.getSource() == jugar){
+            } else {
+                if (e.getSource() == jugar) {
                     ayuda.setVisible(false);
                     jugar.setVisible(false);
+                    mostrarNiveles.setVisible(false);
                     opcionNo.setVisible(true);
                     opcionSi.setVisible(true);
 
+
+
                     //pedir datos a usuario
-                    String nombreJugador = JOptionPane.showInputDialog("Ingrese su nombre: ");
+                    jugadoresGuardados.pedirDatos();
 
-                    //Verificar usuario, si es nuevo -> nivel 1
-                    //                   si ya jugó -> dar su nivel
-
-                    //una vez verificado, tomar las palabras respectivas del nivel, de diccionario.txt
-
-                    //llamar métodos según la demanda del programa
-
-                }else {
+                    //Verificar usuario
+                    //JOptionPane.showMessageDialog(null,jugadoresGuardados.getSiJugo(jugadoresGuardados.getNombre()));
+                    if (jugadoresGuardados.getSiJugo(jugadoresGuardados.getNombre()) != false) { //si ya jugó -> dar su nivel
+                        if(jugadoresGuardados.getNivel() != 0){
+                            JOptionPane.showMessageDialog(null,"Usuario encontrado: "+jugadoresGuardados.getNombre()+", Nivel a jugar: "+jugadoresGuardados.getNivel());
+                            switch (1) { //poner el numero del nivel
+                                case 1:
+                                    controlThatWord.mostrarPalabras(10);
+                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                    controlThatWord.mostrarEvaluacion(20);
+                                    controlThatWord.calificarEvaluacion(7);
+                                    break;
+                                case 2:
+                                    controlThatWord.mostrarPalabras(20);
+                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                    controlThatWord.mostrarEvaluacion(40);
+                                    controlThatWord.calificarEvaluacion(14);
+                                    break;
+                                case 3:
+                                    controlThatWord.mostrarPalabras(25);
+                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                    controlThatWord.mostrarEvaluacion(50);
+                                    controlThatWord.calificarEvaluacion(19);
+                                    break;
+                                case 4:
+                                    controlThatWord.mostrarPalabras(30);
+                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                    controlThatWord.mostrarEvaluacion(60);
+                                    controlThatWord.calificarEvaluacion(24);
+                                    break;
+                                case 5:
+                                    controlThatWord.mostrarPalabras(35);
+                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                    controlThatWord.mostrarEvaluacion(70);
+                                    controlThatWord.calificarEvaluacion(28);
+                                    break;
+                                case 6:
+                                    controlThatWord.mostrarPalabras(40);
+                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                    controlThatWord.mostrarEvaluacion(80);
+                                    controlThatWord.calificarEvaluacion(34);
+                                    break;
+                                case 7:
+                                    controlThatWord.mostrarPalabras(50);
+                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                    controlThatWord.mostrarEvaluacion(100);
+                                    controlThatWord.calificarEvaluacion(45);
+                                    break;
+                                case 8:
+                                    controlThatWord.mostrarPalabras(60);
+                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                    controlThatWord.mostrarEvaluacion(120);
+                                    controlThatWord.calificarEvaluacion(54);
+                                    break;
+                                case 9:
+                                    controlThatWord.mostrarPalabras(70);
+                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                    controlThatWord.mostrarEvaluacion(140);
+                                    controlThatWord.calificarEvaluacion(65);
+                                    break;
+                                case 10:
+                                    controlThatWord.mostrarPalabras(100);
+                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                    controlThatWord.mostrarEvaluacion(200);
+                                    controlThatWord.calificarEvaluacion(100);
+                                    break;
+                                default:
+                                    controlThatWord.mostrarPalabras(100);
+                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                    controlThatWord.mostrarEvaluacion(200);
+                                    controlThatWord.calificarEvaluacion(100);
+                                    break;
+                            }
+                        }else{
+                            JOptionPane.showMessageDialog(null,"Bienvenido a I know that word");
+                            controlThatWord.mostrarPalabras(10);
+                            controlThatWord.mostrarEvaluacion(20);
+                            controlThatWord.calificarEvaluacion(7);
+                        }
+                    }
+                } else {
                     if (e.getSource() == salir) {
                         System.exit(0);
+                        //guardar el nivel en su respectivo usuario
+                    } else {
+                        if (e.getSource() == mostrarNiveles) {
+                            JOptionPane.showMessageDialog(null, "Nivel   Memorizar   Mostradas   %Aciertos\n" +
+                                                                                       " 01             10                    20                  70\n" +
+                                                                                       " 02             20                    40                  70\n" +
+                                                                                       " 03             25                    50                  75\n" +
+                                                                                       " 04             30                    60                  80\n" +
+                                                                                       " 05             35                    70                  80\n" +
+                                                                                       " 06             40                    80                  85\n" +
+                                                                                       " 07             50                    100                90\n" +
+                                                                                       " 08             60                    120                90\n" +
+                                                                                       " 09             70                    140                95\n" +
+                                                                                       " 10            100                   200               100\n");
+                        } else {
+                            if(e.getSource() == opcionNo){
+                                //Aquí implementar el llamado de los respectivos métodos desde ControlThatWord
+                            }else{
+                                if(e.getSource() == opcionSi){
+                                    //Aquí implementar el llamado de los respectivos métodos desde ControlThatWord
+                                }
+                            }
+                        }
                     }
                 }
             }
