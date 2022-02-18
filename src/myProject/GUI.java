@@ -1,12 +1,10 @@
 package myProject;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.util.ArrayList;
 
 /**
  * This class is used for design the interface, with their respective listeners and orders that arise from these.
@@ -16,7 +14,7 @@ import java.io.PrintWriter;
 public class GUI extends JFrame {
 
     public static final String MENSAJE_AYUDA=
-            "Se te presentará una secuencia de palabras, una detrás de otra.\n" +
+            "Cuando pulses el botón Jugar se te presentará una secuencia de\n palabras, una detrás de otra. " +
             "¡Memorizalas todas!\n\n" +
             "Después de la serie de las palabras a memorizar, el juego\n" +
             "te presentará un listado con el doble de palabras.\n" +
@@ -28,9 +26,22 @@ public class GUI extends JFrame {
     private FileManager fileManager;
     private Escucha escucha;
     private JButton opcionNo, opcionSi, jugar, ayuda, salir, mostrarNiveles;
+    private JLabel nivelUsuario;
     private JPanel panelPalabras, panelPuntajeUsuario, panelNivelUsuario;
+
     JugadoresGuardados jugadoresGuardados = new JugadoresGuardados();
     ControlThatWord controlThatWord = new ControlThatWord();
+
+    /**
+     * Listas receptoras
+     */
+    ArrayList<String>palabrasAdivinar;
+    ArrayList<String>palabrasTotal;
+
+    /**
+     * Panel principal
+     */
+    static GUI miProjectGUI;
 
     /**
      * Constructor of GUI class
@@ -77,6 +88,8 @@ public class GUI extends JFrame {
         opcionNo = new JButton("No");
         opcionNo.setFont(new Font("Monospaced",Font.BOLD,13));
         opcionNo.addActionListener(escucha);
+        this.nivelUsuario = new JLabel();
+
         constraints.gridx = 0;
         constraints.gridy = 3;
         constraints.gridwidth = 1;
@@ -177,6 +190,21 @@ public class GUI extends JFrame {
         this.add(panelNivelUsuario, constraints);
     }
 
+    //Getters and Setters -> solo utilizo getters
+    public JPanel getPanelPalabras() {
+        return panelPalabras;
+    }
+
+    public JPanel getPanelPuntajeUsuario() {
+        return panelPuntajeUsuario;
+    }
+
+
+    public JPanel getPanelNivelUsuario() {
+        return panelNivelUsuario;
+    }
+
+
     /**
      * Main process of the Java program
      * @param args Object used in order to send input data from command line when
@@ -192,6 +220,7 @@ public class GUI extends JFrame {
      * inner class that extends an Adapter Class or implements Listeners used by GUI class
      */
     private class Escucha implements ActionListener {
+        String palabraActual = "";
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -202,94 +231,128 @@ public class GUI extends JFrame {
                     ayuda.setVisible(false);
                     jugar.setVisible(false);
                     mostrarNiveles.setVisible(false);
-                    opcionNo.setVisible(true);
-                    opcionSi.setVisible(true);
 
+                    jugadoresGuardados.pedirDatos(); //pedir datos
+                    int nivel = 1; //nivel por defecto
 
+                    //verificar usuario
+                    if(jugadoresGuardados.getSiJugo(jugadoresGuardados.getNombre())){
+                        nivel = jugadoresGuardados.getNivel();
+                    }
 
-                    //pedir datos a usuario
-                    jugadoresGuardados.pedirDatos();
+                    nivelUsuario.setText(String.valueOf(nivel));
+                    panelNivelUsuario.add(nivelUsuario);
 
-                    //Verificar usuario
-                    //JOptionPane.showMessageDialog(null,jugadoresGuardados.getSiJugo(jugadoresGuardados.getNombre()));
-                    if (jugadoresGuardados.getSiJugo(jugadoresGuardados.getNombre()) != false) { //si ya jugó -> dar su nivel
-                        if(jugadoresGuardados.getNivel() != 0){
-                            JOptionPane.showMessageDialog(null,"Usuario encontrado: "+jugadoresGuardados.getNombre()+", Nivel a jugar: "+jugadoresGuardados.getNivel());
-                            switch (1) { //poner el numero del nivel
-                                case 1:
-                                    controlThatWord.mostrarPalabras(10);
-                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
-                                    controlThatWord.mostrarEvaluacion(20);
-                                    controlThatWord.calificarEvaluacion(7);
-                                    break;
-                                case 2:
-                                    controlThatWord.mostrarPalabras(20);
-                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
-                                    controlThatWord.mostrarEvaluacion(40);
-                                    controlThatWord.calificarEvaluacion(14);
-                                    break;
-                                case 3:
-                                    controlThatWord.mostrarPalabras(25);
-                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
-                                    controlThatWord.mostrarEvaluacion(50);
-                                    controlThatWord.calificarEvaluacion(19);
-                                    break;
-                                case 4:
-                                    controlThatWord.mostrarPalabras(30);
-                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
-                                    controlThatWord.mostrarEvaluacion(60);
-                                    controlThatWord.calificarEvaluacion(24);
-                                    break;
-                                case 5:
-                                    controlThatWord.mostrarPalabras(35);
-                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
-                                    controlThatWord.mostrarEvaluacion(70);
-                                    controlThatWord.calificarEvaluacion(28);
-                                    break;
-                                case 6:
-                                    controlThatWord.mostrarPalabras(40);
-                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
-                                    controlThatWord.mostrarEvaluacion(80);
-                                    controlThatWord.calificarEvaluacion(34);
-                                    break;
-                                case 7:
-                                    controlThatWord.mostrarPalabras(50);
-                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
-                                    controlThatWord.mostrarEvaluacion(100);
-                                    controlThatWord.calificarEvaluacion(45);
-                                    break;
-                                case 8:
-                                    controlThatWord.mostrarPalabras(60);
-                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
-                                    controlThatWord.mostrarEvaluacion(120);
-                                    controlThatWord.calificarEvaluacion(54);
-                                    break;
-                                case 9:
-                                    controlThatWord.mostrarPalabras(70);
-                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
-                                    controlThatWord.mostrarEvaluacion(140);
-                                    controlThatWord.calificarEvaluacion(65);
-                                    break;
-                                case 10:
-                                    controlThatWord.mostrarPalabras(100);
-                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
-                                    controlThatWord.mostrarEvaluacion(200);
-                                    controlThatWord.calificarEvaluacion(100);
-                                    break;
-                                default:
-                                    controlThatWord.mostrarPalabras(100);
-                                    JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
-                                    controlThatWord.mostrarEvaluacion(200);
-                                    controlThatWord.calificarEvaluacion(100);
-                                    break;
-                            }
-                        }else{
+                    if (jugadoresGuardados.getNivel() != 0) { //si ya jugó -> dar su nivel
+                        JOptionPane.showMessageDialog(null, "Usuario encontrado: " + jugadoresGuardados.getNombre() + ", Nivel a jugar: " + jugadoresGuardados.getNivel());
+                        switch (nivel) {
+                            case 1:
+                                palabrasAdivinar = controlThatWord.mostrarPalabras(10);
+                                JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                opcionNo.setVisible(true);
+                                opcionSi.setVisible(true);
+                                palabrasTotal = controlThatWord.mostrarEvaluacion(20);
+                                for (String s : palabrasTotal) {
+                                    JLabel labelPalabra = new JLabel(s);
+                                    panelPalabras.removeAll();
+                                    panelPalabras.add(labelPalabra);
+                                    System.out.println("GUI:" + s);
+                                    //Espere 7 segundos Timer
+                                    palabraActual = s;
+                                }
+                                //controlThatWord.calificarEvaluacion(14);
+                                break;
+                            case 2:
+                                controlThatWord.mostrarPalabras(20);
+                                JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                opcionNo.setVisible(true);
+                                opcionSi.setVisible(true);
+                                controlThatWord.mostrarEvaluacion(40);
+                                controlThatWord.calificarEvaluacion(28);
+                                break;
+                            case 3:
+                                controlThatWord.mostrarPalabras(25);
+                                JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                opcionNo.setVisible(true);
+                                opcionSi.setVisible(true);
+                                controlThatWord.mostrarEvaluacion(50);
+                                controlThatWord.calificarEvaluacion(35);
+                                break;
+                            case 4:
+                                controlThatWord.mostrarPalabras(30);
+                                JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                opcionNo.setVisible(true);
+                                opcionSi.setVisible(true);
+                                controlThatWord.mostrarEvaluacion(60);
+                                controlThatWord.calificarEvaluacion(48);
+                                break;
+                            case 5:
+                                controlThatWord.mostrarPalabras(35);
+                                JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                opcionNo.setVisible(true);
+                                opcionSi.setVisible(true);
+                                controlThatWord.mostrarEvaluacion(70);
+                                controlThatWord.calificarEvaluacion(56);
+                                break;
+                            case 6:
+                                controlThatWord.mostrarPalabras(40);
+                                JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                opcionNo.setVisible(true);
+                                opcionSi.setVisible(true);
+                                controlThatWord.mostrarEvaluacion(80);
+                                controlThatWord.calificarEvaluacion(68);
+                                break;
+                            case 7:
+                                controlThatWord.mostrarPalabras(50);
+                                JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                opcionNo.setVisible(true);
+                                opcionSi.setVisible(true);
+                                controlThatWord.mostrarEvaluacion(100);
+                                controlThatWord.calificarEvaluacion(90);
+                                break;
+                            case 8:
+                                controlThatWord.mostrarPalabras(60);
+                                JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                opcionNo.setVisible(true);
+                                opcionSi.setVisible(true);
+                                controlThatWord.mostrarEvaluacion(120);
+                                controlThatWord.calificarEvaluacion(108);
+                                break;
+                            case 9:
+                                controlThatWord.mostrarPalabras(70);
+                                JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                opcionNo.setVisible(true);
+                                opcionSi.setVisible(true);
+                                controlThatWord.mostrarEvaluacion(140);
+                                controlThatWord.calificarEvaluacion(133);
+                                break;
+                            case 10:
+                                controlThatWord.mostrarPalabras(100);
+                                JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                opcionNo.setVisible(true);
+                                opcionSi.setVisible(true);
+                                controlThatWord.mostrarEvaluacion(200);
+                                controlThatWord.calificarEvaluacion(200);
+                                break;
+                            default:
+                                controlThatWord.mostrarPalabras(100);
+                                JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                                opcionNo.setVisible(true);
+                                opcionSi.setVisible(true);
+                                controlThatWord.mostrarEvaluacion(200);
+                                controlThatWord.calificarEvaluacion(200);
+                                break;
+                        }
+                    }/*else{
                             JOptionPane.showMessageDialog(null,"Bienvenido a I know that word");
                             controlThatWord.mostrarPalabras(10);
+                            JOptionPane.showMessageDialog(null, "Demuestra qué palabras recuerdas");
+                            opcionNo.setVisible(true);
+                            opcionSi.setVisible(true);
                             controlThatWord.mostrarEvaluacion(20);
-                            controlThatWord.calificarEvaluacion(7);
-                        }
-                    }
+                            controlThatWord.calificarEvaluacion(14);
+                        }*/
+
                 } else {
                     if (e.getSource() == salir) {
                         System.exit(0);
@@ -309,10 +372,11 @@ public class GUI extends JFrame {
                                                                                        " 10            100                   200               100\n");
                         } else {
                             if(e.getSource() == opcionNo){
-                                //Aquí implementar el llamado de los respectivos métodos desde ControlThatWord
+                                System.out.println(controlThatWord.procesarRespuesta("No", palabraActual));
+
                             }else{
                                 if(e.getSource() == opcionSi){
-                                    //Aquí implementar el llamado de los respectivos métodos desde ControlThatWord
+                                    System.out.println(controlThatWord.procesarRespuesta("Si", palabraActual));
                                 }
                             }
                         }

@@ -6,14 +6,14 @@ import java.util.ArrayList;
 /**
  * This class is used for create the methods that give logic to the game, how, for example, to keep track of
  * errors, also of successes.
- * @autor
+ * @autor william velasco - 2042577 william.velasco@correounivalle.edu.co
  * @version v.1.0.0 date:08/02/2022
  */
 public class ControlThatWord {
     private Diccionario diccionario;
-    private String nuevaPalabra, palabra;
-    private int conteoErrores, conteoAciertos, nivelActual, nivelPorJugar;
-    private boolean existencia, fallo, ganar, isGanador;
+    private String palabra;
+    private int conteoAciertos, nivelActual, nivelPorJugar;
+    private boolean existencia, evaluarExistencia;
     private ArrayList<String> palabrasMemorizar = new ArrayList<String>();
     private ArrayList<String> totalPalabras = new ArrayList<String>();
 
@@ -21,68 +21,47 @@ public class ControlThatWord {
         diccionario = new Diccionario();
     }
 
+
     //mostrar las palabras desde palabrasNivelActual según el nivel CON TIMER
-    public void mostrarPalabras(int numeroPalabras){
+    String nuevaPalabra;
+
+    public ArrayList<String> mostrarPalabras(int numeroPalabras){
         for(int i=0; i<numeroPalabras; i++){
             nuevaPalabra = diccionario.getPalabra();
+            while(existePalabra(nuevaPalabra,this.palabrasMemorizar)){
+                nuevaPalabra = diccionario.getPalabra();
+            }
             palabrasMemorizar.add(nuevaPalabra); // agregar la nueva palabra al array indicado
             existencia = palabrasMemorizar.equals(nuevaPalabra);
-            if(existencia == true){
+        }
+        return palabrasMemorizar;
+    }
+
+    /**
+     * Evaluar palabras
+     * @param doblePalabras
+     */
+    public ArrayList<String> mostrarEvaluacion(int doblePalabras){
+        this.totalPalabras = new ArrayList<>();
+        for(int i=0; i<palabrasMemorizar.size(); i++){ //agrefar palabras mostradas
+            totalPalabras.add(palabrasMemorizar.get(i));
+        }
+        doblePalabras = doblePalabras - palabrasMemorizar.size();
+        while(doblePalabras>0){
+            nuevaPalabra = diccionario.getPalabra();
+            while(existePalabra(nuevaPalabra,this.totalPalabras)){
                 nuevaPalabra = diccionario.getPalabra();
-            }else{
-                //mostrar palabra 5 segundos
             }
+            totalPalabras.add(nuevaPalabra); //agregar palabras para mostrar en evalucaion
+            doblePalabras--;
         }
+        return totalPalabras;
     }
 
-    //Mostrar palabras para que el usuario responda sí o no CON TIMER
-    public void mostrarEvaluacion(int doblePalabras){
-        int contador=0, puntaje=0;
-        //String palabra;
-        boolean evaluarExistencia;
-        for(int i=0; i<palabrasMemorizar.size(); i++){
-            String estaPalabra = palabrasMemorizar.get(i);
-            totalPalabras.add(estaPalabra);
-        }
-
-        /*do{
-            //sacarPalabra de totalPalabras y mostrarla 7 seg
-            palabra = ""; // con random guardar la palabra sacada en esta variable
-            evaluarExistencia = totalPalabras.equals(palabra);
-            if(SI && evaluarExistencia){
-                conteoAciertos++;
-                totalPalabras.remove(palabra); //borrar la palabra del array totalPalabas
-                //opcionNo.setEnable(false);
-                //opcionSi.setEnable(false);
-            }else{
-                if(SI && !evaluarExistencia){
-                    conteoErrores++;
-                    totalPalabras.remove(palabra);
-                    //opcionNo.setEnable(false);
-                    //opcionSi.setEnable(false);
-                }else{
-                    if(NO && evaluarExistencia){
-                        conteoErrores++;
-                        totalPalabras.remove(palabra);
-                        //opcionNo.setEnable(false);
-                        //opcionSi.setEnable(false);
-                    }else{
-                        if(NO && !evaluarExistencia){
-                            conteoAciertos++;
-                            totalPalabras.remove(palabra);
-                            //opcionNo.setEnable(false);
-                            //opcionSi.setEnable(false);
-                        }else{
-                            conteoErrores++;
-                            totalPalabras.remove(palabra);
-                        }
-                    }
-                }
-            }
-        }while(contador<doblePalabras);*/
-    }
-
-    //verificar el puntaje para pasar o no al siguiente nivel o se repite el mismo nivel
+    /**
+     * Decide si el usuario gana
+     * @param reglaNivel
+     */
     public Boolean calificarEvaluacion(int reglaNivel){
         if(conteoAciertos >= reglaNivel){
             JOptionPane.showMessageDialog(null,"Felicidades, pasaste al siguiente nivel!");
@@ -92,6 +71,41 @@ public class ControlThatWord {
                                                                       "Revisa la tabla de puntajes e inténtalo de nuevo");
             return false;
         }
+    }
+
+    /**
+     * Evaluar palabras
+     * @param response,palabra
+     */
+    public boolean procesarRespuesta(String response, String palabra) {
+        System.out.println("Palabra:" + palabra + "Response" + response);
+        boolean flag = false;
+        for (String s : palabrasMemorizar) {
+            if (s.equals(palabra)) {
+                flag = true;
+            }
+            if (s.equals(palabra) && response.equals("Si")) {
+                return true;
+            }
+        }
+        //La palabra no está
+        if (flag == false && response.equals("No")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Evaluar palabras
+     * @param palabra,ArrayList
+     */
+    public boolean existePalabra(String palabra, ArrayList<String> lstAnalizar) {
+        for (int i = 0; i < lstAnalizar.size(); i++) {
+            if (lstAnalizar.get(i).equals(palabra)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     //actualizar el nivel del juego
