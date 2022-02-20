@@ -1,4 +1,4 @@
-package myProject;
+package myProject.View;
 
 import javax.swing.*;
 import java.awt.*;
