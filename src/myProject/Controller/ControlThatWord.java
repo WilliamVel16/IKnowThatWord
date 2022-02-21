@@ -18,11 +18,9 @@ public class ControlThatWord {
     private ArrayList<String> palabrasMemorizar = new ArrayList<String>();
     private ArrayList<String> totalPalabras = new ArrayList<String>();
     int i = 0;
-    public static Timer timerAdivinar = null;
-    public static Timer timerEvaluar = null;
     /* HashMap Guarda Porcentaje de Aciertos de cada nivel */
     HashMap<Integer, Integer> Porcentajes = new HashMap<>();
-    private int totalAciertos = 0;
+    public int totalAciertos = 0;
 
     public ControlThatWord() {
         diccionario = new Diccionario();
@@ -87,7 +85,7 @@ public class ControlThatWord {
                 if(procesarRespuesta(respuesta, s)){
                     totalAciertos ++;
                 }
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -1,7 +1,2 @@
-william 3
 usuario 1
-
-santi 1
-williamm 1
-pepito 1
-pedrito 1
+william 3
