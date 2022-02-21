@@ -29,16 +29,13 @@ public class GUI extends JFrame {
     private Escucha escucha;
     private JButton opcionNo, opcionSi, jugar, ayuda, salir, mostrarNiveles;
     private JLabel nivelUsuario;
-    private JPanel panelPalabras, panelPuntajeUsuario, panelNivelUsuario;
+    private JPanel panelPalabras, panelNivelUsuario;
     Jugador jugadoresGuardados = new Jugador();
     ControlThatWord controlThatWord = new ControlThatWord();
-    JOptionPane msgRecordar = new JOptionPane("¿PODRÁS?", JOptionPane.QUESTION_MESSAGE);
 
     /* Variables Evalaución */
     boolean timerFlag = false;
     int nivel = 1; // Nivel por defecto
-    Timer timerAdivinar;
-    Timer timerEvaluar;
     /* Listas Receptoras */
     ArrayList<String> palabrasAdivinar;
     ArrayList<String> palabrasTotal;
@@ -152,7 +149,7 @@ public class GUI extends JFrame {
         this.add(salir, constraints);
 
         panelPalabras = new JPanel();
-        panelPalabras.setPreferredSize((new Dimension(400, 150)));
+        panelPalabras.setPreferredSize((new Dimension(400, 180)));
         panelPalabras.setBorder(BorderFactory.createTitledBorder("Palabras"));
         panelPalabras.setBorder(BorderFactory.createEtchedBorder(Color.YELLOW, Color.BLACK));
         constraints.gridx = 0;
@@ -166,22 +163,12 @@ public class GUI extends JFrame {
         panelPalabras.setFocusable(true);
         panelPalabras.requestFocusInWindow();
 
-        panelPuntajeUsuario = new JPanel();
-        panelPuntajeUsuario.setPreferredSize((new Dimension(200, 50)));
-        panelPuntajeUsuario.setBackground(new Color(255, 255, 255, 0));
-        panelPuntajeUsuario.setBorder(BorderFactory.createTitledBorder("Tu puntaje"));
-        constraints.gridx = 1;
-        constraints.gridy = 2;
-        constraints.gridwidth = 1;
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.anchor = GridBagConstraints.CENTER;
-        this.add(panelPuntajeUsuario, constraints);
-
         panelNivelUsuario = new JPanel();
         panelNivelUsuario.add(nivelUsuario, constraints);
         panelNivelUsuario.setPreferredSize((new Dimension(200, 50)));
         panelNivelUsuario.setBackground(new Color(255, 255, 255, 0));
-        panelNivelUsuario.setBorder(BorderFactory.createTitledBorder("Nivel"));
+        //panelNivelUsuario.setBorder(BorderFactory.createTitledBorder("Nivel"));
+        panelNivelUsuario.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(2,Color.BLACK,Color.YELLOW),"Nivel",2,1,new Font("Monospaced", Font.BOLD, 13)));
         constraints.gridx = 0;
         constraints.gridy = 2;
         constraints.gridwidth = 1;
@@ -190,18 +177,6 @@ public class GUI extends JFrame {
         this.add(panelNivelUsuario, constraints);
     }
 
-    /* Getters and Setters */
-    public JPanel getPanelPalabras() {
-        return panelPalabras;
-    }
-
-    public JPanel getPanelPuntajeUsuario() {
-        return panelPuntajeUsuario;
-    }
-
-    public JPanel getPanelNivelUsuario() {
-        return panelNivelUsuario;
-    }
 
     /**
      * Main process of the Java program
@@ -243,17 +218,19 @@ public class GUI extends JFrame {
 
                         nivelUsuario.setText(String.valueOf(nivel));
                         panelNivelUsuario.add(nivelUsuario);
+                        int puntajeUser = 0;
                         if (jugadoresGuardados.getNivel() != 0) {
                             switch (nivel) {
                                 case 1:
                                     palabrasAdivinar = controlThatWord.mostrarPalabras(10);
+                                    JOptionPane.showMessageDialog(null,"Preparate para responder!");
                                     controlThatWord.mostrarEvaluacion(20);
+                                    puntajeUser = controlThatWord.totalAciertos;
                                     if (controlThatWord.calificarEvaluacion(14)) {
                                         jugadoresGuardados.setNivel(++nivel);
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ganaste, ¿Quieres continuar? Siguiente Nivel:"
-                                                        + jugadoresGuardados.getNivel(),
-                                                "Responde", JOptionPane.YES_NO_OPTION);
+                                                "Ganaste! Puntaje: "+puntajeUser+" ¿Quieres continuar al Nivel: "+jugadoresGuardados.getNivel()+"?",
+                                                "Felicidades", JOptionPane.YES_NO_OPTION);
                                         if (respuesta == 1) {
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
@@ -265,8 +242,8 @@ public class GUI extends JFrame {
 
                                     } else {
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ups! No Ganaste :(, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
+                                                "Ups! No Ganaste, puntaje: "+puntajeUser+" ¿Quieres repetir el nivel: "
+                                                        + jugadoresGuardados.getNivel()+"?",
                                                 "Responde",
                                                 JOptionPane.YES_NO_OPTION);
                                         if (respuesta == 1) { // No quiere seguir jugando
@@ -282,14 +259,15 @@ public class GUI extends JFrame {
 
 
                                 case 2:
-                                palabrasAdivinar = controlThatWord.mostrarPalabras(20);
+                                    palabrasAdivinar = controlThatWord.mostrarPalabras(20);
+                                    JOptionPane.showMessageDialog(null,"Preparate para responder!");
                                     controlThatWord.mostrarEvaluacion(40);
+                                    puntajeUser = controlThatWord.totalAciertos;
                                     if (controlThatWord.calificarEvaluacion(28)) {
                                         jugadoresGuardados.setNivel(++nivel);
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ganaste, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
-                                                "Responde", JOptionPane.YES_NO_OPTION);
+                                                "Ganaste! Puntaje: "+puntajeUser+" ¿Quieres continuar al Nivel: "+jugadoresGuardados.getNivel()+"?",
+                                                "Felicidades", JOptionPane.YES_NO_OPTION);
                                         if (respuesta == 1) {
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
@@ -301,8 +279,8 @@ public class GUI extends JFrame {
 
                                     } else {
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ups! No Ganaste :(, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
+                                                "Ups! No Ganaste, puntaje: "+puntajeUser+" ¿Quieres repetir el nivel: "
+                                                        + jugadoresGuardados.getNivel()+"?",
                                                 "Responde",
                                                 JOptionPane.YES_NO_OPTION);
                                         if (respuesta == 1) { // No quiere seguir jugando
@@ -318,48 +296,15 @@ public class GUI extends JFrame {
 
 
                                 case 3:
-                                palabrasAdivinar = controlThatWord.mostrarPalabras(25);
-                                controlThatWord.mostrarEvaluacion(50);
-                                if (controlThatWord.calificarEvaluacion(35)) {
-                                    jugadoresGuardados.setNivel(++nivel);
-                                    int respuesta = JOptionPane.showConfirmDialog(null,
-                                            "Ganaste, ¿Quieres continuar? Siguiente Nivel: "
-                                                    + jugadoresGuardados.getNivel(),
-                                            "Responde", JOptionPane.YES_NO_OPTION);
-                                    if (respuesta == 1) {
-                                        FileManager m = FileManager.getInstance();
-                                        m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
-                                                m.existeUserName(jugadoresGuardados.getNombre()));
-                                        System.exit(0);
-                                    } else {
-                                        break;
-                                    }
-
-                                } else {
-                                    int respuesta = JOptionPane.showConfirmDialog(null,
-                                            "Ups! No Ganaste :(, ¿Quieres continuar? Siguiente Nivel: "
-                                                    + jugadoresGuardados.getNivel(),
-                                            "Responde",
-                                            JOptionPane.YES_NO_OPTION);
-                                    if (respuesta == 0) { // No quiere seguir jugando
-                                        FileManager m = FileManager.getInstance();
-                                        m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
-                                                m.existeUserName(jugadoresGuardados.getNombre()));
-                                        System.exit(0);
-                                    }
-                                    break;
-                                }
-
-
-                                case 4:
-                                    palabrasAdivinar = controlThatWord.mostrarPalabras(30);
-                                    controlThatWord.mostrarEvaluacion(60);
-                                    if (controlThatWord.calificarEvaluacion(48)) {
+                                    palabrasAdivinar = controlThatWord.mostrarPalabras(25);
+                                    JOptionPane.showMessageDialog(null,"Preparate para responder!");
+                                    controlThatWord.mostrarEvaluacion(50);
+                                    puntajeUser = controlThatWord.totalAciertos;
+                                    if (controlThatWord.calificarEvaluacion(38)) {
                                         jugadoresGuardados.setNivel(++nivel);
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ganaste, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
-                                                "Responde", JOptionPane.YES_NO_OPTION);
+                                                "Ganaste! Puntaje: "+puntajeUser+" ¿Quieres continuar al Nivel: "+jugadoresGuardados.getNivel()+"?",
+                                                "Felicidades", JOptionPane.YES_NO_OPTION);
                                         if (respuesta == 1) {
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
@@ -371,29 +316,69 @@ public class GUI extends JFrame {
 
                                     } else {
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ups! No Ganaste :(, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
+                                                "Ups! No Ganaste, puntaje: "+puntajeUser+" ¿Quieres repetir el nivel: "
+                                                        + jugadoresGuardados.getNivel()+"?",
                                                 "Responde",
                                                 JOptionPane.YES_NO_OPTION);
-                                        if (respuesta == 0) { // No quiere seguir jugando
+                                        if (respuesta == 1) { // No quiere seguir jugando
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
                                                     m.existeUserName(jugadoresGuardados.getNombre()));
                                             System.exit(0);
                                         }
-                                        break;
+                                        else {
+                                            break;
+                                        }
+                                    }
+
+
+                                case 4:
+                                    palabrasAdivinar = controlThatWord.mostrarPalabras(30);
+                                    JOptionPane.showMessageDialog(null,"Preparate para responder!");
+                                    controlThatWord.mostrarEvaluacion(60);
+                                    puntajeUser = controlThatWord.totalAciertos;
+                                    if (controlThatWord.calificarEvaluacion(48)) {
+                                        jugadoresGuardados.setNivel(++nivel);
+                                        int respuesta = JOptionPane.showConfirmDialog(null,
+                                                "Ganaste! Puntaje: "+puntajeUser+" ¿Quieres continuar al Nivel: "+jugadoresGuardados.getNivel()+"?",
+                                                "Felicidades", JOptionPane.YES_NO_OPTION);
+                                        if (respuesta == 1) {
+                                            FileManager m = FileManager.getInstance();
+                                            m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
+                                                    m.existeUserName(jugadoresGuardados.getNombre()));
+                                            System.exit(0);
+                                        } else {
+                                            break;
+                                        }
+
+                                    } else {
+                                        int respuesta = JOptionPane.showConfirmDialog(null,
+                                                "Ups! No Ganaste, puntaje: "+puntajeUser+" ¿Quieres repetir el nivel: "
+                                                        + jugadoresGuardados.getNivel()+"?",
+                                                "Responde",
+                                                JOptionPane.YES_NO_OPTION);
+                                        if (respuesta == 1) { // No quiere seguir jugando
+                                            FileManager m = FileManager.getInstance();
+                                            m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
+                                                    m.existeUserName(jugadoresGuardados.getNombre()));
+                                            System.exit(0);
+                                        }
+                                        else {
+                                            break;
+                                        }
                                     }
 
 
                                 case 5:
                                     palabrasAdivinar = controlThatWord.mostrarPalabras(35);
+                                    JOptionPane.showMessageDialog(null,"Preparate para responder!");
                                     controlThatWord.mostrarEvaluacion(70);
-                                    if (controlThatWord.calificarEvaluacion(28)) {
+                                    puntajeUser = controlThatWord.totalAciertos;
+                                    if (controlThatWord.calificarEvaluacion(56)) {
                                         jugadoresGuardados.setNivel(++nivel);
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ganaste, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
-                                                "Responde", JOptionPane.YES_NO_OPTION);
+                                                "Ganaste! Puntaje: "+puntajeUser+" ¿Quieres continuar al Nivel: "+jugadoresGuardados.getNivel()+"?",
+                                                "Felicidades", JOptionPane.YES_NO_OPTION);
                                         if (respuesta == 1) {
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
@@ -405,30 +390,32 @@ public class GUI extends JFrame {
 
                                     } else {
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ups! No Ganaste :(, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
+                                                "Ups! No Ganaste, puntaje: "+puntajeUser+" ¿Quieres repetir el nivel: "
+                                                        + jugadoresGuardados.getNivel()+"?",
                                                 "Responde",
                                                 JOptionPane.YES_NO_OPTION);
-                                        if (respuesta == 0) { // No quiere seguir jugando
+                                        if (respuesta == 1) { // No quiere seguir jugando
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
                                                     m.existeUserName(jugadoresGuardados.getNombre()));
                                             System.exit(0);
                                         }
-                                        break;
+                                        else {
+                                            break;
+                                        }
                                     }
 
 
                                 case 6:
-
                                     palabrasAdivinar = controlThatWord.mostrarPalabras(40);
+                                    JOptionPane.showMessageDialog(null,"Preparate para responder!");
                                     controlThatWord.mostrarEvaluacion(80);
-                                    if (controlThatWord.calificarEvaluacion(34)) {
+                                    puntajeUser = controlThatWord.totalAciertos;
+                                    if (controlThatWord.calificarEvaluacion(68)) {
                                         jugadoresGuardados.setNivel(++nivel);
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ganaste, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
-                                                "Responde", JOptionPane.YES_NO_OPTION);
+                                                "Ganaste! Puntaje: "+puntajeUser+" ¿Quieres continuar al Nivel: "+jugadoresGuardados.getNivel()+"?",
+                                                "Felicidades", JOptionPane.YES_NO_OPTION);
                                         if (respuesta == 1) {
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
@@ -440,29 +427,32 @@ public class GUI extends JFrame {
 
                                     } else {
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ups! No Ganaste :(, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
+                                                "Ups! No Ganaste, puntaje: "+puntajeUser+" ¿Quieres repetir el nivel: "
+                                                        + jugadoresGuardados.getNivel()+"?",
                                                 "Responde",
                                                 JOptionPane.YES_NO_OPTION);
-                                        if (respuesta == 0) { // No quiere seguir jugando
+                                        if (respuesta == 1) { // No quiere seguir jugando
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
                                                     m.existeUserName(jugadoresGuardados.getNombre()));
                                             System.exit(0);
                                         }
-                                        break;
+                                        else {
+                                            break;
+                                        }
                                     }
 
 
                                 case 7:
                                     palabrasAdivinar = controlThatWord.mostrarPalabras(50);
+                                    JOptionPane.showMessageDialog(null,"Preparate para responder!");
                                     controlThatWord.mostrarEvaluacion(100);
-                                    if (controlThatWord.calificarEvaluacion(45)) {
+                                    puntajeUser = controlThatWord.totalAciertos;
+                                    if (controlThatWord.calificarEvaluacion(90)) {
                                         jugadoresGuardados.setNivel(++nivel);
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ganaste, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
-                                                "Responde", JOptionPane.YES_NO_OPTION);
+                                                "Ganaste! Puntaje: "+puntajeUser+" ¿Quieres continuar al Nivel: "+jugadoresGuardados.getNivel()+"?",
+                                                "Felicidades", JOptionPane.YES_NO_OPTION);
                                         if (respuesta == 1) {
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
@@ -474,29 +464,32 @@ public class GUI extends JFrame {
 
                                     } else {
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ups! No Ganaste :(, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
+                                                "Ups! No Ganaste, puntaje: "+puntajeUser+" ¿Quieres repetir el nivel: "
+                                                        + jugadoresGuardados.getNivel()+"?",
                                                 "Responde",
                                                 JOptionPane.YES_NO_OPTION);
-                                        if (respuesta == 0) { // No quiere seguir jugando
+                                        if (respuesta == 1) { // No quiere seguir jugando
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
                                                     m.existeUserName(jugadoresGuardados.getNombre()));
                                             System.exit(0);
                                         }
-                                        break;
+                                        else {
+                                            break;
+                                        }
                                     }
 
 
                                 case 8:
                                     palabrasAdivinar = controlThatWord.mostrarPalabras(60);
+                                    JOptionPane.showMessageDialog(null,"Preparate para responder!");
                                     controlThatWord.mostrarEvaluacion(120);
-                                    if (controlThatWord.calificarEvaluacion(54)) {
+                                    puntajeUser = controlThatWord.totalAciertos;
+                                    if (controlThatWord.calificarEvaluacion(108)) {
                                         jugadoresGuardados.setNivel(++nivel);
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ganaste, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
-                                                "Responde", JOptionPane.YES_NO_OPTION);
+                                                "Ganaste! Puntaje: "+puntajeUser+" ¿Quieres continuar al Nivel: "+jugadoresGuardados.getNivel()+"?",
+                                                "Felicidades", JOptionPane.YES_NO_OPTION);
                                         if (respuesta == 1) {
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
@@ -508,29 +501,32 @@ public class GUI extends JFrame {
 
                                     } else {
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ups! No Ganaste :(, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
+                                                "Ups! No Ganaste, puntaje: "+puntajeUser+" ¿Quieres repetir el nivel: "
+                                                        + jugadoresGuardados.getNivel()+"?",
                                                 "Responde",
                                                 JOptionPane.YES_NO_OPTION);
-                                        if (respuesta == 0) { // No quiere seguir jugando
+                                        if (respuesta == 1) { // No quiere seguir jugando
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
                                                     m.existeUserName(jugadoresGuardados.getNombre()));
                                             System.exit(0);
                                         }
-                                        break;
+                                        else {
+                                            break;
+                                        }
                                     }
 
 
                                 case 9:
                                     palabrasAdivinar = controlThatWord.mostrarPalabras(70);
+                                    JOptionPane.showMessageDialog(null,"Preparate para responder!");
                                     controlThatWord.mostrarEvaluacion(140);
-                                    if (controlThatWord.calificarEvaluacion(65)) {
+                                    puntajeUser = controlThatWord.totalAciertos;
+                                    if (controlThatWord.calificarEvaluacion(133)) {
                                         jugadoresGuardados.setNivel(++nivel);
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ganaste, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
-                                                "Responde", JOptionPane.YES_NO_OPTION);
+                                                "Ganaste! Puntaje: "+puntajeUser+" ¿Quieres continuar al Nivel: "+jugadoresGuardados.getNivel()+"?",
+                                                "Felicidades", JOptionPane.YES_NO_OPTION);
                                         if (respuesta == 1) {
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
@@ -542,29 +538,32 @@ public class GUI extends JFrame {
 
                                     } else {
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ups! No Ganaste :(, ¿Quieres continuar? Siguiente Nivel: "
-                                                        + jugadoresGuardados.getNivel(),
+                                                "Ups! No Ganaste, puntaje: "+puntajeUser+" ¿Quieres repetir el nivel: "
+                                                        + jugadoresGuardados.getNivel()+"?",
                                                 "Responde",
                                                 JOptionPane.YES_NO_OPTION);
-                                        if (respuesta == 0) { // No quiere seguir jugando
+                                        if (respuesta == 1) { // No quiere seguir jugando
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
                                                     m.existeUserName(jugadoresGuardados.getNombre()));
                                             System.exit(0);
                                         }
-                                        break;
+                                        else {
+                                            break;
+                                        }
                                     }
 
 
                                 case 10:
                                     palabrasAdivinar = controlThatWord.mostrarPalabras(100);
+                                    JOptionPane.showMessageDialog(null,"Preparate para responder!");
                                     controlThatWord.mostrarEvaluacion(200);
+                                    puntajeUser = controlThatWord.totalAciertos;
                                     if (controlThatWord.calificarEvaluacion(200)) {
                                         jugadoresGuardados.setNivel(++nivel);
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ganaste, ¿Quieres continuar? Siguiente Nivel:"
-                                                        + jugadoresGuardados.getNivel(),
-                                                "Responde", JOptionPane.YES_NO_OPTION);
+                                                "Pasaste todos los niveles, puntaje: "+puntajeUser,
+                                                "Felicidades!", JOptionPane.YES_NO_OPTION);
                                         if (respuesta == 1) {
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
@@ -576,29 +575,32 @@ public class GUI extends JFrame {
 
                                     } else {
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ups! No Ganaste :(, ¿Quieres continuar? Siguiente Nivel:"
-                                                        + jugadoresGuardados.getNivel(),
+                                                "Ups! No Ganaste, puntaje: "+puntajeUser+" ¿Quieres repetir el nivel: "
+                                                        + jugadoresGuardados.getNivel()+"?",
                                                 "Responde",
                                                 JOptionPane.YES_NO_OPTION);
-                                        if (respuesta == 0) { // No quiere seguir jugando
+                                        if (respuesta == 1) { // No quiere seguir jugando
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
                                                     m.existeUserName(jugadoresGuardados.getNombre()));
                                             System.exit(0);
                                         }
-                                        break;
+                                        else {
+                                            break;
+                                        }
                                     }
 
 
                                 default:
-                                    palabrasAdivinar = controlThatWord.mostrarPalabras(101);
+                                    palabrasAdivinar = controlThatWord.mostrarPalabras(100);
+                                    JOptionPane.showMessageDialog(null,"Preparate para responder!");
                                     controlThatWord.mostrarEvaluacion(200);
+                                    puntajeUser = controlThatWord.totalAciertos;
                                     if (controlThatWord.calificarEvaluacion(200)) {
                                         jugadoresGuardados.setNivel(++nivel);
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ganaste, ¿Quieres continuar? Siguiente Nivel:"
-                                                        + jugadoresGuardados.getNivel(),
-                                                "Responde", JOptionPane.YES_NO_OPTION);
+                                                "Puntaje: "+puntajeUser+" ¿Quieres segui jugando?",
+                                                "¡Felicidades!", JOptionPane.YES_NO_OPTION);
                                         if (respuesta == 1) {
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
@@ -610,24 +612,25 @@ public class GUI extends JFrame {
 
                                     } else {
                                         int respuesta = JOptionPane.showConfirmDialog(null,
-                                                "Ups! No Ganaste :(, ¿Quieres continuar? Siguiente Nivel:"
-                                                        + jugadoresGuardados.getNivel(),
+                                                "Ups! No Ganaste, puntaje: "+puntajeUser+" ¿Quieres repetir el nivel: "
+                                                        + jugadoresGuardados.getNivel()+"?",
                                                 "Responde",
                                                 JOptionPane.YES_NO_OPTION);
-                                        if (respuesta == 0) { // No quiere seguir jugando
+                                        if (respuesta == 1) { // No quiere seguir jugando
                                             FileManager m = FileManager.getInstance();
                                             m.saveUser(jugadoresGuardados.getNivel(), jugadoresGuardados.getNombre(),
                                                     m.existeUserName(jugadoresGuardados.getNombre()));
                                             System.exit(0);
                                         }
-                                        break;
+                                        else {
+                                            break;
+                                        }
                                     }
                             }
                         }
 
                     }
 
-                    // PASÓ TODOS LOS NIVELES
 
                 } else {
                     if (e.getSource() == salir) {
